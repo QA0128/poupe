@@ -12,15 +12,26 @@ export async function setupColorMode<K extends string>(context: SetupContext<K>)
   if (nuxt.options.colorMode === false) return;
 
   if (hasNuxtModule('@nuxtjs/color-mode', nuxt)) {
-    if (nuxt.options.colorMode) {
+    if (nuxt.options.colorMode && typeof nuxt.options.colorMode === 'object') {
       nuxt.options.colorMode.classPrefix = '';
       nuxt.options.colorMode.classSuffix = '';
     }
   } else {
-    await installModule('@nuxtjs/color-mode', {
-      ...(nuxt.options.colorMode ?? undefined),
+    const baseOptions = (nuxt.options.colorMode && typeof nuxt.options.colorMode === 'object' ? nuxt.options.colorMode : {}) as Partial<ColorModeModuleOptions>;
+    const colorModeModuleOptions: ColorModeModuleOptions = {
+      preference: baseOptions.preference || 'system',
+      fallback: baseOptions.fallback || 'light',
+      globalName: baseOptions.globalName || 'nuxt-color-mode',
+      componentName: baseOptions.componentName || 'ColorScheme',
       classPrefix: '',
       classSuffix: '',
-    }, nuxt);
+      dataValue: baseOptions.dataValue || 'theme',
+      storageKey: baseOptions.storageKey || 'nuxt-color-mode',
+      storage: baseOptions.storage || 'localStorage',
+      script: baseOptions.script || '',
+      disableTransition: baseOptions.disableTransition ?? false,
+    };
+
+    await installModule('@nuxtjs/color-mode', colorModeModuleOptions, nuxt);
   }
 };
