@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "nuxi": "^3.34.0"
-    "nuxi": "^3.34.0"
   },
   "engines": {
     "node": ">=20.19.2",
